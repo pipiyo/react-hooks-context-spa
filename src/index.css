@@ -71,3 +71,21 @@ LoginPage styles
   text-align: center;
   margin-bottom: 1em;
 }
+
+/* Dashboard Layout */
+main {
+  display: grid;
+  height: 100vh;
+  grid-template-areas:
+    'Header Header'
+    'MessageArea MessageArea';
+  grid-template-rows: 49px;
+  grid-template-columns: 250px;
+}
+.Header {
+  grid-area: Header;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+}
