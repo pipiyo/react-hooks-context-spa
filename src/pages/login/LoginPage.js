@@ -1,5 +1,8 @@
 import React, {useState}  from 'react';
 
+import { getUser } from '../../api/api';
+import { UserConsumer } from '../../context/UserContext';
+
 function useLogin() {
   const [
       state, 
@@ -37,11 +40,53 @@ function LoginPage() {
     });
   };
 
+  const handleSubmit = async(evt, onLogin) => {
+    evt.preventDefault();
+
+    onStateChange({
+      index: 'loading',
+      value: true
+    });
+    onStateChange({
+      index: 'error',
+      value: null
+    });
+
+      try {
+        const result = await getUser({ username: state.username, email: state.password });
+        onStateChange({
+          index: 'loading',
+          value: false
+        });
+        if (result.length === 0) {
+          onStateChange({
+            index: 'error',
+            value: {
+              message: 'User or Password Incorrect',
+            }
+          });
+        } else {
+          onLogin(result[0]);
+        }
+      } catch (error) {
+        onStateChange({
+          index: 'loading',
+          value: false
+        });
+        onStateChange({
+          index: 'error',
+          value: error
+        });
+      }
+  };
+
     const { username, password, error, loading } = state;
 
     return (
+      <UserConsumer>
+        {({ onLogin }) => (
           <div className="LoginPage">
-            <form>
+            <form onSubmit={(evt) => handleSubmit(evt, onLogin) }>
               <h1> UMBRELLACORP </h1>
               <label>
                 Sing in whit email
@@ -66,6 +111,8 @@ function LoginPage() {
               </button>
             </form>
           </div>
+        )}
+      </UserConsumer>
     );
   
 }
